@@ -1,0 +1,16 @@
+*.zip
+/toy-webrtc-mmo.exe
+/toy-webrtc-mmo.exe~
+/toy-webrtc-mmo
+/server
+/server.exe
+/server.exe~
+/dev-server
+/dev-server.exe
+/cmd/serve/serve
+/cmd/serve/serve.exe
+/asset-server
+/asset-server.exe
+/dist/main.wasm
+/TODO.md
+/.vscode

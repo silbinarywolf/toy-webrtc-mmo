@@ -1,0 +1,105 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<style>
+			body {
+				background-color: #000;
+				color: #fff;
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+			}
+
+			.error-container {
+				background-color: #F47F7F;
+				border: 1px solid #531212;
+				color: #000;
+				padding: 10px 10px;
+			}
+			.game-container {
+				width: 1280px;
+				max-width: 100%;
+				margin: 0 auto;
+			}
+			.progress-bar-wrapper {
+				width: 100%;
+				height: 10px;
+				border: 1px solid #266926;
+			}
+			.progress-bar {
+				width: 0%;
+				height: inherit;
+				background-color: #46C346;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="game-container">
+			<p>Loading...</p>
+			<div class="progress-bar-wrapper">
+				<div class="progress-bar"></div>
+			</div>
+		</div>
+	</body>
+	<script src="wasm_exec.js"></script>
+	<script>
+		function addErrorMessage(message) {
+			var el = document.querySelector(".error-container");
+			if (!el) {
+				while (document.body.hasChildNodes()) {
+					document.body.removeChild(document.body.childNodes[0]);
+				}
+				el = document.createElement("div");
+				el.classList.add("error-container");
+				document.body.appendChild(el);
+			}
+			// This is a bit of a hack so that the same error doesn't print
+			// infinitely.
+			if (el.textContent != message) {
+				var newContent = document.createTextNode(message); 
+				el.appendChild(newContent);
+			}
+			document.body.appendChild(el);
+		}
+		window.onerror = function(message, source, lineno, colno, error) {
+			addErrorMessage(message);
+		}
+		var progressBar = document.body.querySelector(".progress-bar");
+		if (!progressBar) {
+			throw new Error("Missing .progress-bar")
+		}
+		function updateProgressBar(percent) {
+			progressBar.style.width = String(percent) + "%";
+		}
+		request = new XMLHttpRequest();
+		request.addEventListener("progress", function (e) {
+			if (!progressBar) {
+				return;
+			}
+			if (e.lengthComputable) {
+				var percent = (e.loaded / e.total * 100 | 0);
+				updateProgressBar(percent);
+			}
+		});
+		request.addEventListener("load", function () {
+			if (request.status !== 200) {
+				throw new Error(request.status + " " + request.statusText);
+			}
+			const go = new Go();
+			WebAssembly.instantiate(request.response, go.importObject).then((result) => {
+				var gameContainer = document.body;
+				while (gameContainer.hasChildNodes()) {
+					gameContainer.removeChild(gameContainer.childNodes[0]);
+				}
+				console.clear();
+				updateProgressBar(100);
+				go.run(result.instance);
+			}).catch((err) => {
+				addErrorMessage(err);
+				console.error(err, request.response);
+			});
+		});
+		request.responseType = "arraybuffer";
+		request.open("GET", "main.wasm?v=20210402");
+		request.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+		request.send();
+	</script>
+</html>
