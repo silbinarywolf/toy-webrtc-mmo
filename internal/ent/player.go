@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/silbinarywolf/toy-webrtc-mmo/internal/asset"
-	"github.com/silbinarywolf/toy-webrtc-mmo/internal/renderer/renderer"
+	"github.com/silbinarywolf/toy-webrtc-mmo/internal/renderer"
 )
 
 var (

@@ -10,7 +10,7 @@ import (
 	"github.com/silbinarywolf/toy-webrtc-mmo/internal/netcode"
 	"github.com/silbinarywolf/toy-webrtc-mmo/internal/netcode/client_or_server"
 	"github.com/silbinarywolf/toy-webrtc-mmo/internal/netcode/netconf"
-	"github.com/silbinarywolf/toy-webrtc-mmo/internal/renderer/renderer"
+	"github.com/silbinarywolf/toy-webrtc-mmo/internal/renderer"
 	"github.com/silbinarywolf/toy-webrtc-mmo/internal/world"
 )
 
@@ -27,11 +27,9 @@ type App struct {
 }
 
 func (app *App) Init() {
-	app.App = getRenderDriver()
-
 	// Load assets
 	{
-		ent.LoadPlayerAssets(app)
+		ent.LoadPlayerAssets(app.App)
 		img, _, err := image.Decode(strings.NewReader(asset.Background))
 		if err != nil {
 			panic(err)
@@ -168,10 +166,10 @@ func (g *App) Layout(outsideWidth, outsideHeight int) (int, int) {
 }
 
 func StartApp() {
-	drv := getRenderDriver()
-	drv.SetWindowSize(world.ScreenWidth, world.ScreenHeight)
-	drv.SetWindowTitle("Toy MMO Platformer WebRTC")
-	if err := drv.RunGame(&App{}); err != nil {
+	app := &App{}
+	app.SetWindowSize(world.ScreenWidth, world.ScreenHeight)
+	app.SetWindowTitle("Toy MMO Platformer WebRTC")
+	if err := app.App.RunGame(app); err != nil {
 		panic(err)
 	}
 }

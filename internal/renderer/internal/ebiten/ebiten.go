@@ -4,16 +4,16 @@ import (
 	"image"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/silbinarywolf/toy-webrtc-mmo/internal/renderer/renderer"
+	"github.com/silbinarywolf/toy-webrtc-mmo/internal/renderer/internal/rendereriface"
 )
 
-var _ renderer.App = new(App)
+var _ rendereriface.App = new(App)
 
 type App struct {
 }
 
 type ebitenGameAndScreen struct {
-	renderer.Game
+	rendereriface.Game
 	screenDriver Screen
 }
 
@@ -34,11 +34,11 @@ func (app *App) SetWindowTitle(title string) {
 	ebiten.SetWindowTitle(title)
 }
 
-func (app *App) NewImageFromImage(img image.Image) renderer.Image {
+func (app *App) NewImageFromImage(img image.Image) rendereriface.Image {
 	return ebiten.NewImageFromImage(img)
 }
 
-func (app *App) RunGame(game renderer.Game) error {
+func (app *App) RunGame(game rendereriface.Game) error {
 	gameWrapper := ebitenGameAndScreen{}
 	gameWrapper.Game = game
 	return ebiten.RunGame(&gameWrapper)
@@ -48,9 +48,9 @@ type Screen struct {
 	screen *ebiten.Image
 }
 
-var _ renderer.Screen = new(Screen)
+var _ rendereriface.Screen = new(Screen)
 
-func (driver *Screen) DrawImage(img renderer.Image, options renderer.ImageOptions) {
+func (driver *Screen) DrawImage(img rendereriface.Image, options rendereriface.ImageOptions) {
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(float64(options.X), float64(options.Y))
 	if options.ScaleX != 0 && options.ScaleY != 0 {

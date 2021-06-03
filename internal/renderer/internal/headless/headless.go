@@ -6,10 +6,10 @@ import (
 	"image"
 	"time"
 
-	"github.com/silbinarywolf/toy-webrtc-mmo/internal/renderer/renderer"
+	"github.com/silbinarywolf/toy-webrtc-mmo/internal/renderer/internal/rendereriface"
 )
 
-var _ renderer.App = new(App)
+var _ rendereriface.App = new(App)
 
 type App struct {
 }
@@ -26,7 +26,7 @@ func (app *App) SetWindowTitle(title string) {
 	// n/a for headless
 }
 
-func (app *App) RunGame(game renderer.Game) error {
+func (app *App) RunGame(game rendereriface.Game) error {
 	// note(jae): 2021-03-18
 	// this should probably align with how the Ebiten clock works
 	// but I'm going to take a lazy shortcut.
@@ -42,7 +42,7 @@ func (app *App) RunGame(game renderer.Game) error {
 	return nil
 }
 
-func (app *App) NewImageFromImage(img image.Image) renderer.Image {
+func (app *App) NewImageFromImage(img image.Image) rendereriface.Image {
 	// n/a for headless
 	return nil
 }
